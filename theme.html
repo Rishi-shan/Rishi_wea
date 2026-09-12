@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17252b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Theme studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="theme-page">
+    <a class="back-link" href="index.html">← Back to forecast</a>
+    <section class="theme-studio">
+      <div class="theme-studio-heading">
+        <div>
+          <p class="eyebrow">Personalise your forecast</p>
+          <h1>Theme studio</h1>
+          <p class="location-intro">Choose your wallpaper and fonts, then preview the result before applying it.</p>
+        </div>
+        <span class="studio-mark" aria-hidden="true">✦</span>
+      </div>
+
+      <div class="theme-studio-layout">
+        <section class="theme-preview-wrap" aria-label="Theme preview">
+          <div class="preview-label"><span>Live preview</span><small>Changes stay here until applied</small></div>
+          <div id="theme-preview" class="theme-preview">
+            <div class="preview-topline"><span>Local forecast</span><strong>✦</strong></div>
+            <h2>London, United Kingdom</h2>
+            <div class="preview-temperature">24<small>°C</small></div>
+            <p>Feels like 22°C</p>
+            <div class="preview-metrics"><span>Humidity <b>41%</b></span><span>Wind <b>13 km/h</b></span></div>
+          </div>
+        </section>
+
+        <section class="theme-options" aria-label="Theme options">
+          <label class="theme-option">
+            <span>Wallpaper</span>
+            <input id="wallpaper-input" type="file" accept="image/*">
+            <small id="wallpaper-status">No custom wallpaper selected</small>
+          </label>
+          <label class="theme-option">
+            <span>Display font</span>
+            <select id="display-font">
+              <option value="pixel">Pixelify Sans</option>
+              <option value="space">Space Grotesk</option>
+              <option value="clean">DM Sans</option>
+            </select>
+          </label>
+          <label class="theme-option">
+            <span>Body font</span>
+            <select id="body-font">
+              <option value="clean">DM Sans</option>
+              <option value="space">Space Grotesk</option>
+              <option value="pixel">Pixelify Sans</option>
+            </select>
+          </label>
+          <label class="theme-option">
+            <span>Number font</span>
+            <select id="number-font">
+              <option value="pixel">Pixelify Sans</option>
+              <option value="space">Space Grotesk</option>
+              <option value="clean">DM Sans</option>
+            </select>
+          </label>
+          <button id="apply-theme" class="apply-theme" type="button">Apply changes</button>
+          <button id="clear-wallpaper" class="secondary-button" type="button">Use original background</button>
+          <p id="theme-status" class="theme-status" aria-live="polite"></p>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="theme.js"></script>
+</body>
+</html>

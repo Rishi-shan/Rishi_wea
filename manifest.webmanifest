@@ -1,0 +1,10 @@
+{
+  "name": "Weather dashboard",
+  "short_name": "Weather",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#17252b",
+  "theme_color": "#17252b",
+  "description": "A personal weather dashboard with live forecasts and custom themes.",
+  "icons": []
+}

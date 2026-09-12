@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A simple weather dashboard">
+  <meta name="theme-color" content="#17252b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Weather dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Local forecast</p>
+        <h1 id="city">Detecting your location...</h1>
+      </div>
+      <div class="topbar-actions">
+        <a href="theme.html" class="theme-btn"><span aria-hidden="true">✦</span> Theme</a>
+        <button onclick="location.href='location.html'" class="add-btn" type="button"><span aria-hidden="true">＋</span> Add city</button>
+      </div>
+    </header>
+
+    <section class="hero-weather" aria-label="Current weather">
+      <div>
+        <p class="eyebrow">Right now</p>
+        <div class="temp"><span id="temp">--</span><span class="degree">°C</span></div>
+        <p class="feels">Feels like <span id="feels">--</span>°C</p>
+      </div>
+      <div class="weather-mark" aria-hidden="true">☼</div>
+    </section>
+
+    <section class="saved-section" aria-label="Saved locations">
+      <div class="card-heading">
+        <div><p class="eyebrow">Your places</p><h2>Countries &amp; cities</h2></div>
+        <a class="manage-link" href="location.html">Manage locations <span aria-hidden="true">→</span></a>
+      </div>
+      <div id="saved-cities" class="saved-cities"></div>
+    </section>
+
+    <section class="grid" aria-label="Weather details">
+      <div class="card metric"><span class="metric-label">Humidity</span><strong><span id="humidity">--</span><small>%</small></strong></div>
+      <div class="card metric"><span class="metric-label">Wind</span><strong><span id="wind">--</span><small> km/h</small></strong></div>
+      <div class="card metric"><span class="metric-label">Visibility</span><strong><span id="visibility">--</span><small> km</small></strong></div>
+      <div class="card metric"><span class="metric-label">Pressure</span><strong><span id="pressure">--</span><small> hPa</small></strong></div>
+      <div class="card forecast">
+        <div class="card-heading"><div><p class="eyebrow">The week ahead</p><h2>10-day forecast</h2></div><span class="card-icon" aria-hidden="true">↗</span></div>
+        <div id="forecast-list"></div>
+      </div>
+      <div class="card metric">
+        <span class="metric-label">Air quality</span>
+        <strong><span id="aqi">--</span><small> AQI</small></strong>
+        <small class="aqi-label" id="aqi-label">Waiting for data</small>
+      </div>
+    </section>
+
+    <section class="card moon-card" aria-label="Moon information">
+      <div class="card-heading"><div><p class="eyebrow">Tonight</p><h2>Moon watch</h2></div><span id="moon-icon" class="moon-icon" aria-hidden="true">◐</span></div>
+      <div class="moon-content">
+        <div class="moon-visual"><div id="moon-phase" class="moon-phase">◐</div><strong id="moon-visibility">Checking...</strong></div>
+        <div class="moon-details">
+          <div><span>Illumination</span><strong id="moon-illumination">--%</strong></div>
+          <div><span>Position</span><strong id="moon-position">--</strong></div>
+          <div><span>Altitude</span><strong id="moon-altitude">--</strong></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

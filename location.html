@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17252b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Add a location</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="location-page">
+    <a class="back-link" href="index.html">← Back to forecast</a>
+    <section class="location-panel">
+      <p class="eyebrow">Personalise your forecast</p>
+      <h1>Add a location</h1>
+      <p class="location-intro">Search for a city to make it your new weather home.</p>
+      <div class="search-row">
+        <label class="sr-only" for="cityInput">City name</label>
+        <input id="cityInput" placeholder="Enter city name" autocomplete="address-level2">
+        <button onclick="addCity()" type="button">Add city</button>
+      </div>
+      <p id="searchStatus" class="search-status" aria-live="polite"></p>
+      <ul id="searchResults" class="search-results"></ul>
+      <h2>Saved locations</h2>
+      <ul id="list"></ul>
+    </section>
+  </main>
+
+  <script src="location.js"></script>
+</body>
+</html>
