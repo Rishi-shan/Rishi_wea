@@ -275,6 +275,8 @@ h2 { margin: 0; font-size: 20px; line-height: 1.2; text-transform: capitalize; }
 .search-status { min-height: 20px; margin: 14px 0 0; color: var(--muted); font-size: 13px; }
 .search-results { margin: 0; padding: 0; list-style: none; }
 input { width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--ink); font: inherit; }
+.search-row input { background: white; color: #000; }
+.search-row input::placeholder { color: #000; opacity: 1; }
 button { border: 0; border-radius: 9px; background: var(--action-background); color: white; font: 600 14px 'DM Sans', sans-serif; padding: 0 18px; cursor: pointer; transition: background 700ms ease, transform 180ms ease; }
 .location-panel h2 { margin: 40px 0 12px; color: white; font-size: 16px; }
 #list { margin: 0; padding: 0; list-style: none; }
