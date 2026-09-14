@@ -1,4 +1,4 @@
-const settings = JSON.parse(localStorage.getItem("themeSettings") || "{}");
+const settings = readThemeSettings();
 const preview = document.getElementById("theme-preview");
 const displayFont = document.getElementById("display-font");
 const bodyFont = document.getElementById("body-font");
@@ -45,6 +45,17 @@ function applyTimeTheme(hour) {
   document.body.dataset.timeOfDay = timeOfDay;
 }
 
+function readThemeSettings() {
+  try {
+    const value = localStorage.getItem("themeSettings");
+    const settings = value ? JSON.parse(value) : {};
+    return settings && typeof settings === "object" ? settings : {};
+  } catch (error) {
+    console.warn("Could not read saved theme settings.", error);
+    return {};
+  }
+}
+
 function applyPreviewFonts() {
   preview.dataset.displayFont = displayFont.value;
   preview.dataset.bodyFont = bodyFont.value;
@@ -54,19 +65,66 @@ function applyPreviewFonts() {
 function previewWallpaper(event) {
   const file = event.target.files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    wallpaperStatus.textContent = "Choose an image smaller than 5 MB";
+  if (!file.type.startsWith("image/")) {
+    wallpaperStatus.textContent = "Choose a supported image file";
     wallpaperInput.value = "";
     return;
   }
+
+  if (file.size > 15 * 1024 * 1024) {
+    wallpaperStatus.textContent = "Choose an image smaller than 15 MB";
+    wallpaperInput.value = "";
+    return;
+  }
+
+  wallpaperStatus.textContent = "Preparing image preview...";
   const reader = new FileReader();
-  reader.onload = result => {
-    selectedWallpaper = result.target.result;
-    applyPreviewWallpaper(selectedWallpaper);
-    wallpaperStatus.textContent = "New wallpaper previewed";
-    themeStatus.textContent = "Preview updated. Apply when ready.";
+  reader.onload = () => {
+    compressWallpaper(reader.result)
+      .then(image => {
+        selectedWallpaper = image;
+        previewPan = { x: 0, y: 0 };
+        wallpaperZoom.value = "1";
+        applyPreviewWallpaper(selectedWallpaper);
+        wallpaperStatus.textContent = "New wallpaper previewed";
+        themeStatus.textContent = "Preview updated. Apply when ready.";
+      })
+      .catch(error => {
+        console.error("Could not prepare wallpaper.", error);
+        wallpaperStatus.textContent = "This image could not be previewed";
+        themeStatus.textContent = "Try another image format or file.";
+        wallpaperInput.value = "";
+      });
   };
+  reader.onerror = () => {
+    wallpaperStatus.textContent = "The image could not be read";
+    themeStatus.textContent = "Try selecting the image again.";
+    wallpaperInput.value = "";
+  };
+  reader.onabort = reader.onerror;
   reader.readAsDataURL(file);
+}
+
+function compressWallpaper(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const maxDimension = 2400;
+      const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext("2d");
+      if (!context) {
+        reject(new Error("Canvas is unavailable"));
+        return;
+      }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.82));
+    };
+    image.onerror = () => reject(new Error("Image decoding failed"));
+    image.src = dataUrl;
+  });
 }
 
 function applyPreviewWallpaper(image) {
@@ -119,14 +177,71 @@ function stopPreviewDrag(event) {
   preview.classList.remove("is-dragging");
 }
 
-function applyTheme() {
-  localStorage.setItem("themeSettings", JSON.stringify({
-    displayFont: displayFont.value,
-    bodyFont: bodyFont.value,
-    numberFont: numberFont.value,
-    wallpaper: selectedWallpaper
-  }));
-  window.location.href = "index.html";
+async function applyTheme() {
+  const originalLabel = document.getElementById("apply-theme").textContent;
+  const applyButton = document.getElementById("apply-theme");
+
+  applyButton.disabled = true;
+  applyButton.textContent = "Saving image...";
+
+  try {
+    const wallpaper = selectedWallpaper
+      ? await createWallpaperCrop(selectedWallpaper)
+      : "";
+
+    localStorage.setItem("themeSettings", JSON.stringify({
+      displayFont: displayFont.value,
+      bodyFont: bodyFont.value,
+      numberFont: numberFont.value,
+      wallpaper
+    }));
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Could not save theme settings.", error);
+    themeStatus.textContent = "Image is too large to save. Choose another image.";
+    applyButton.disabled = false;
+    applyButton.textContent = originalLabel;
+  }
+}
+
+function createWallpaperCrop(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const width = preview.clientWidth;
+      const height = preview.clientHeight;
+      const coverScale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+      const scale = coverScale * Number(wallpaperZoom.value);
+      const sourceWidth = width / scale;
+      const sourceHeight = height / scale;
+      const sourceX = image.naturalWidth / 2 - previewPan.x / scale - sourceWidth / 2;
+      const sourceY = image.naturalHeight / 2 - previewPan.y / scale - sourceHeight / 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width));
+      canvas.height = Math.max(1, Math.round(height));
+      const context = canvas.getContext("2d");
+
+      if (!context) {
+        reject(new Error("Canvas is unavailable"));
+        return;
+      }
+
+      context.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      resolve(canvas.toDataURL("image/jpeg", 0.86));
+    };
+    image.onerror = () => reject(new Error("Image decoding failed"));
+    image.src = dataUrl;
+  });
 }
 
 function clearWallpaper() {
